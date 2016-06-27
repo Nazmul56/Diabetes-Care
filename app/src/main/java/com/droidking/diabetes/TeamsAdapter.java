@@ -8,10 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-
-/**
- * Created by kstanoev on 1/14/2015.
- */
 public class TeamsAdapter extends ArrayAdapter<Team> {
 
     Context context;
@@ -32,18 +28,19 @@ public class TeamsAdapter extends ArrayAdapter<Team> {
         }
         Team o = teams.get(position);
         if (o != null) {
-            TextView time = (TextView) v.findViewById(R.id.tvTime);
-            TextView beat = (TextView) v.findViewById(R.id.tvBEat);
-            TextView aeat = (TextView) v.findViewById(R.id.tvAEat);
-            TextView bpsys = (TextView) v.findViewById(R.id.tvBPsys);
-            TextView bpdys = (TextView) v.findViewById(R.id.tvBPdys);
+            TextView pos = (TextView) v.findViewById(R.id.position);
+            TextView name = (TextView) v.findViewById(R.id.name);
+            TextView wins = (TextView) v.findViewById(R.id.wins);
+            TextView draws = (TextView) v.findViewById(R.id.draws);
+            TextView losses = (TextView) v.findViewById(R.id.losses);
+            TextView points = (TextView) v.findViewById(R.id.points);
 
-
-            time.setText(String.valueOf(o.getTime()));
-            beat.setText(String.valueOf(o.getBEat()));
-            aeat.setText(String.valueOf(o.getAEat()));
-            bpsys.setText(String.valueOf(o.getBPsys()));
-            bpdys.setText(String.valueOf(o.getBPdys()));
+            pos.setText(String.valueOf(o.getPosition()));
+            name.setText(String.valueOf(o.getName()));
+            wins.setText(String.valueOf(o.getWins()));
+            draws.setText(String.valueOf(o.getDraws()));
+            losses.setText(String.valueOf(o.getLosses()));
+            points.setText(String.valueOf(o.getPoints()));
         }
         return v;
     }

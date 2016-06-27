@@ -12,7 +12,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
     //input element ids found from the live form page
     public static final String BEat_KEY="entry.1248647360";
     public static final String AEat_KEY="entry.206365149";
-
     public static final String BP_Systol_KEY = "entry.1229261796";
     public static final String BP_Dyastol_KEY = "entry.1323596523";
 
@@ -107,27 +105,26 @@ public class MainActivity extends AppCompatActivity {
             public void onResult(JSONObject object) {
                 processJson(object);
             }
-        }).execute("https://spreadsheets.google.com/tq?key=16uF0rvqE9meY3YFb8KgBBwEbhUVmVtFDLA8F1XIKzKUw");
+        }).execute("https://spreadsheets.google.com/tq?key=1yyTcjWA6RAUwkI7sKOevWXAJfpITs__Zb0TwilihDCw");
 
     }
     private void processJson(JSONObject object) {
 
         try {
             JSONArray rows = object.getJSONArray("rows");
-                Log.d("Lenth : ",""+rows.length());
+
             for (int r = 0; r < rows.length(); ++r) {
                 JSONObject row = rows.getJSONObject(r);
                 JSONArray columns = row.getJSONArray("c");
 
-                String time =columns.getJSONObject(0).getString("v");
-                double BEat = columns.getJSONObject(1).getDouble("v");
-                double AEat = columns.getJSONObject(2).getDouble("v");
-                int BPsys = columns.getJSONObject(3).getInt("v");
-                int BPdys = columns.getJSONObject(4).getInt("v");
-               // int points = columns.getJSONObject(19).getInt("v");
-                Team team = new Team(time, BEat,AEat,BPsys,BPdys);
+                int position = columns.getJSONObject(0).getInt("v");
+                String name = columns.getJSONObject(1).getString("v");
+                int wins = columns.getJSONObject(3).getInt("v");
+                int draws = columns.getJSONObject(4).getInt("v");
+                int losses = columns.getJSONObject(5).getInt("v");
+                int points = columns.getJSONObject(19).getInt("v");
+                Team team = new Team(position, name, wins, draws, losses, points);
                 teams.add(team);
-                Log.d("Check :" ,""+r );
             }
 
             final TeamsAdapter adapter = new TeamsAdapter(this, R.layout.team, teams);

@@ -1,64 +1,65 @@
 package com.droidking.diabetes;
-
-/**
- * Created by kstanoev on 1/14/2015.
- */
 public class Team {
-    String time;
-    double BEat ;
-    double AEat ;
-    int BPsys ;
-    int BPdys ;
+    private int position;
+    private String name;
+    private int wins, draws, losses;
+    private int points;
 
-    public Team(String time, double BEat ,double AEat,int BPsys ,int BPdys )
+    public Team(int position, String name, int wins, int draws, int losses, int points)
     {
-        this.setTime(time);
-        this.setBEat(BEat);
-        this.setAEat(AEat);
-        this.setBPsys(BPsys);
-        this.setBPdys(BPdys);
-
+        this.setPosition(position);
+        this.setName(name);
+        this.setWins(wins);
+        this.setDraws(draws);
+        this.setLosses(losses);
+        this.setPoints(points);
     }
 
-    public String getTime() {
-        return time;
+    public int getPosition() {
+        return position;
     }
 
-    public void setTime(String time) {
-        this.time= time;
+    public void setPosition(int position) {
+        this.position = position;
     }
 
-    public double getBEat() {
-        return BEat;
+    public String getName() {
+        return name;
     }
 
-    public void setBEat(double BEat) {
-        this.BEat = BEat;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public double getAEat() {
-        return BEat;
+    public int getWins() {
+        return wins;
     }
 
-    public void setAEat(double AEat) {
-        this.AEat = AEat;
+    public void setWins(int wins) {
+        this.wins = wins;
     }
 
-    public int getBPsys() {
-        return BPsys;
+    public int getDraws() {
+        return draws;
     }
 
-    public void setBPsys(int BPsys) {
-        this.BPdys = BPsys;
+    public void setDraws(int draws) {
+        this.draws = draws;
     }
 
-    public int getBPdys() {
-        return BPdys;
+    public int getLosses() {
+        return losses;
     }
 
-    public void setBPdys(int BPdys) {
-        this.BPdys = BPdys;
+    public void setLosses(int losses) {
+        this.losses = losses;
     }
 
+    public int getPoints() {
+        return points;
+    }
 
+    public void setPoints(int points) {
+        this.points = points;
+    }
 }
