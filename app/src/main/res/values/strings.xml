@@ -61,4 +61,20 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
+    <string name="reading_ok">OK</string>
+    <string name="reading_hypo">Hypoglycemia</string>
+    <string name="reading_low">Low</string>
+    <string name="reading_high">High</string>
+    <string name="reading_hyper">Hyperglycemia</string>
+
+    <string name="fragment_overview_last_reading">Last check:</string>
+    <string name="fragment_overview_trend">Trend over past month:</string>
+    <string name="fragment_overview_trend_positive">in range and healthy</string>
+    <string name="fragment_overview_selector_month">Month</string>
+    <string name="fragment_overview_selector_day">Day</string>
+    <string name="fragment_overview_selector_week">Week</string>
+
+    <string name="tab_tips">Tips</string>
+
 </resources>

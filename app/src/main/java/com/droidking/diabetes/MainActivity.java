@@ -2,7 +2,9 @@ package com.droidking.diabetes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -20,8 +22,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.LegendRenderer;
+import com.jjoe64.graphview.helper.StaticLabelsFormatter;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Team> teams = new ArrayList<Team>();
     public static ListView listview;
     public static Button btnDownload;
-
     public static final MediaType FORM_DATA_TYPE
             = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
     //URL derived from form URL
@@ -74,27 +88,19 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three from link
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
         context = this;
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
@@ -109,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void processJson(JSONObject object) {
-
         try {
             JSONArray rows = object.getJSONArray("rows");
 
@@ -126,15 +131,12 @@ public class MainActivity extends AppCompatActivity {
                 Team team = new Team(position, name, wins, draws, losses, points);
                 teams.add(team);
             }
-
             final TeamsAdapter adapter = new TeamsAdapter(this, R.layout.team, teams);
             listview.setAdapter(adapter);
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -188,8 +190,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-           if(getArguments().getInt(ARG_SECTION_NUMBER)==1)
+           if(getArguments().getInt(ARG_SECTION_NUMBER)==3)
            {
+
                View rootView1 = inflater.inflate(R.layout.fragment_submit, container, false);
 
                Button sendButton = (Button)rootView1.findViewById(R.id.bSubmit);
@@ -234,18 +237,137 @@ public class MainActivity extends AppCompatActivity {
                btnDownload.setEnabled(true);
 
                return rootView2;
-            }else {
+            }else if(getArguments().getInt(ARG_SECTION_NUMBER)==1){
 
-                View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-                TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-                textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+               View rootView2 = inflater.inflate(R.layout.fragment_overview, container, false);
+               LineChart chart = (LineChart) rootView2.findViewById(R.id.chart);
+               Legend legend = chart.getLegend();
+               XAxis xAxis = chart.getXAxis();
+               xAxis.setDrawGridLines(false);
+               xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+               xAxis.setTextColor(getResources().getColor(R.color.glucosio_text_light));
+               xAxis.setAvoidFirstLastClipping(true);
+               YAxis leftAxis = chart.getAxisLeft();
+               leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
 
-                return rootView;
+               /*leftAxis.addLimitLine(ll1);
+               leftAxis.addLimitLine(ll2);
+               leftAxis.addLimitLine(ll3);
+               leftAxis.addLimitLine(ll4);
+               */
+
+               leftAxis.setTextColor(getResources().getColor(R.color.glucosio_text_light));
+               leftAxis.setStartAtZero(false);
+               //leftAxis.setYOffset(20f);
+               leftAxis.disableGridDashedLine();
+               leftAxis.setDrawGridLines(false);
+
+               // limit lines are drawn behind data (and not on top)
+               leftAxis.setDrawLimitLinesBehindData(true);
+
+               chart.getAxisRight().setEnabled(false);
+               chart.setBackgroundColor(Color.parseColor("#FFFFFF"));
+               chart.setDescription("");
+               chart.setGridBackgroundColor(Color.parseColor("#FFFFFF"));
+              // setData();
+               ArrayList<String> xVals = new ArrayList<String>();
+               ArrayList<Integer> colors = new ArrayList<>();
+               ArrayList<Entry> yVals = new ArrayList<Entry>();
+               //Set Data Value /
+               for(int i =0; i<15;i++) {
+                   xVals.add(""+i);
+                   float val = i;
+                   yVals.add(new Entry(val, i));
+               }
+
+               LineDataSet set1 = new LineDataSet(yVals, "");
+               // set the line to be drawn like this "- - - - - -"
+               set1.setColor(getResources().getColor(R.color.glucosio_pink));
+               set1.setCircleColors(colors);
+               set1.setLineWidth(0f);
+               set1.setCircleSize(2.8f);
+               set1.setDrawCircleHole(false);
+               set1.disableDashedLine();
+               set1.setFillAlpha(255);
+               set1.setDrawFilled(true);
+               set1.setValueTextSize(0);
+               set1.setValueTextColor(Color.parseColor("#FFFFFF"));
+               set1.setFillColor(Color.parseColor("#FCE2EA"));
+               colors.add(getResources().getColor(R.color.glucosio_reading_ok));
+               if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2){
+                   set1.setDrawFilled(false);
+                   set1.setLineWidth(3f);
+                   set1.setCircleSize(4.5f);
+                   set1.setDrawCircleHole(true);
+
+               }
+
+               ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+               dataSets.add(set1); // add the datasets
+
+               LineData data = new LineData(xVals, dataSets);
+
+               chart.setData(data);
+               chart.setPinchZoom(true);
+               chart.setHardwareAccelerationEnabled(true);
+               chart.animateY(1000, Easing.EasingOption.EaseOutCubic);
+
+               legend.setEnabled(false);
+               return rootView2;
+           }
+           else {
+
+               View rootView1 = inflater.inflate(R.layout.fragment_graph, container, false);
+               GraphView graph = (GraphView) rootView1.findViewById(R.id.graph);
+
+               StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
+               staticLabelsFormatter.setHorizontalLabels(new String[]{"Jan", "Feb", "Mar", "Apr", "May"});
+               // staticLabelsFormatter.setVerticalLabels(new String[] {"low", "middle", "high"});
+               graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+
+               LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
+                       new DataPoint(0, 1d),
+                       new DataPoint(1, 5d),
+                       new DataPoint(2, 3d),
+                       new DataPoint(3, 2d),
+                       new DataPoint(4, 10d),
+                       new DataPoint(5, 9d),
+                       new DataPoint(6, 19d)
+
+               });
+               series.setThickness(2);
+               graph.addSeries(series);
+
+               LineGraphSeries<DataPoint> series2 = new LineGraphSeries<DataPoint>(new DataPoint[] {
+                       new DataPoint(0, 3d),
+                       new DataPoint(1, 6d),
+                       new DataPoint(2, 7d),
+                       new DataPoint(3, 3d),
+                       new DataPoint(4, 11d),
+                       new DataPoint(5, 10d),
+                       new DataPoint(6, 18d)
+
+               });
+
+               series2.setColor(Color.RED);
+               series2.setThickness(2);
+               graph.addSeries(series2);
+               series.setTitle("After");
+               series2.setTitle("Before");
+               graph.getLegendRenderer().setVisible(true);
+               graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+
+               return rootView1;
             }
         }
     }
 
-
+    private static void setData() {
+        for (int i = 0; i < 10; i++) {
+            String date = "10";
+          //  xVals.add(date + "");
+        }
+    }
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -266,23 +388,24 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return 4;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Submit";
+                    return "Overview";
                 case 1:
                     return "History";
                 case 2:
                     return "Reports";
+                case 3:
+                    return "New";
             }
             return null;
         }
     }
-
 
     private static class PostDataTask extends AsyncTask<String, Void, Boolean> {
 
@@ -295,7 +418,6 @@ public class MainActivity extends AppCompatActivity {
             String BPSystol = contactData[3];
             String BPDystol = contactData[4];
             String postBody="";
-
             try {
                 //all values must be URL encoded to make sure that special characters like & | ",etc.
                 //do not cause problems
@@ -306,7 +428,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (UnsupportedEncodingException ex) {
                 result=false;
             }
-
             try{
                 //Create OkHttpClient for sending request
                 OkHttpClient client = new OkHttpClient();
@@ -323,12 +444,10 @@ public class MainActivity extends AppCompatActivity {
             }
             return result;
         }
-
         @Override
         protected void onPostExecute(Boolean result){
             //Print Success or failure message accordingly
             Toast.makeText(context, result ? "Message successfully sent!" : "There was some error in sending message. Please try again after some time.", Toast.LENGTH_LONG).show();
         }
-
     }
 }
