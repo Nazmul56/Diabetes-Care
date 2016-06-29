@@ -6,11 +6,17 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -32,11 +38,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.LegendRenderer;
-import com.jjoe64.graphview.helper.StaticLabelsFormatter;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,7 +54,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String DEBUG_TAG = "HttpExample";
     ArrayList<Team> teams = new ArrayList<Team>();
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_navigation);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three from link
@@ -104,6 +105,36 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
     public void buttonClickHandler(View view) {
         new DownloadWebpageTask(new AsyncResult() {
@@ -137,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -190,54 +222,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-           if(getArguments().getInt(ARG_SECTION_NUMBER)==3)
+           if(getArguments().getInt(ARG_SECTION_NUMBER)==1)
            {
-
-               View rootView1 = inflater.inflate(R.layout.fragment_submit, container, false);
-
-               Button sendButton = (Button)rootView1.findViewById(R.id.bSubmit);
-               BEatEditText = (EditText)rootView1.findViewById(R.id.etDate);
-               AEatEditText = (EditText)rootView1.findViewById(R.id.etSugarLevel);
-               BP_SystolEditText = (EditText) rootView1.findViewById(R.id.etBPSystol);
-               BP_DyastolEditText = (EditText) rootView1.findViewById(R.id.etBPDiaystol);
-
-               sendButton.setOnClickListener(new View.OnClickListener() {
-                   @Override
-                   public void onClick(View v) {
-
-                       //Make sure all the fields are filled with values
-                       if(TextUtils.isEmpty(BEatEditText.getText().toString()) &&
-                               TextUtils.isEmpty(AEatEditText.getText().toString())&&
-                               TextUtils.isEmpty(BP_SystolEditText.getText().toString())&&
-                               TextUtils.isEmpty(BP_DyastolEditText.getText().toString()))
-                       {
-                           Toast.makeText(context,"Any fields are mandatory.",Toast.LENGTH_LONG).show();
-                           return;
-                       }
-                       //Create an object for PostDataTask AsyncTask
-                       PostDataTask postDataTask = new PostDataTask();
-
-                       //execute asynctask
-                       postDataTask.execute(URL,BEatEditText.getText().toString(),
-                               AEatEditText.getText().toString(),
-                               BP_SystolEditText.getText().toString(),
-                               BP_DyastolEditText.getText().toString());
-                   }
-               });
-               return rootView1;
-           }
-            else if(getArguments().getInt(ARG_SECTION_NUMBER)==2){
-
-                View rootView2 = inflater.inflate(R.layout.fragment_list, container, false);
-
-               listview = (ListView) rootView2.findViewById(R.id.listview);
-               btnDownload = (Button) rootView2.findViewById(R.id.btnDownload);
-               //ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-              // NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-               btnDownload.setEnabled(true);
-
-               return rootView2;
-            }else if(getArguments().getInt(ARG_SECTION_NUMBER)==1){
 
                View rootView2 = inflater.inflate(R.layout.fragment_overview, container, false);
                LineChart chart = (LineChart) rootView2.findViewById(R.id.chart);
@@ -269,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
                chart.setBackgroundColor(Color.parseColor("#FFFFFF"));
                chart.setDescription("");
                chart.setGridBackgroundColor(Color.parseColor("#FFFFFF"));
-              // setData();
+               // setData();
                ArrayList<String> xVals = new ArrayList<String>();
                ArrayList<Integer> colors = new ArrayList<>();
                ArrayList<Entry> yVals = new ArrayList<Entry>();
@@ -314,8 +300,54 @@ public class MainActivity extends AppCompatActivity {
 
                legend.setEnabled(false);
                return rootView2;
+
            }
-           else {
+            else if(getArguments().getInt(ARG_SECTION_NUMBER)==2){
+
+                View rootView2 = inflater.inflate(R.layout.fragment_list, container, false);
+
+               listview = (ListView) rootView2.findViewById(R.id.listview);
+               btnDownload = (Button) rootView2.findViewById(R.id.btnDownload);
+               //ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+              // NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+               btnDownload.setEnabled(true);
+
+               return rootView2;
+            }else {
+
+               View rootView1 = inflater.inflate(R.layout.fragment_submit, container, false);
+
+               Button sendButton = (Button)rootView1.findViewById(R.id.bSubmit);
+               BEatEditText = (EditText)rootView1.findViewById(R.id.etDate);
+               AEatEditText = (EditText)rootView1.findViewById(R.id.etSugarLevel);
+               BP_SystolEditText = (EditText) rootView1.findViewById(R.id.etBPSystol);
+               BP_DyastolEditText = (EditText) rootView1.findViewById(R.id.etBPDiaystol);
+
+               sendButton.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+
+                       //Make sure all the fields are filled with values
+                       if (TextUtils.isEmpty(BEatEditText.getText().toString()) &&
+                               TextUtils.isEmpty(AEatEditText.getText().toString()) &&
+                               TextUtils.isEmpty(BP_SystolEditText.getText().toString()) &&
+                               TextUtils.isEmpty(BP_DyastolEditText.getText().toString())) {
+                           Toast.makeText(context, "Any fields are mandatory.", Toast.LENGTH_LONG).show();
+                           return;
+                       }
+                       //Create an object for PostDataTask AsyncTask
+                       PostDataTask postDataTask = new PostDataTask();
+
+                       //execute asynctask
+                       postDataTask.execute(URL, BEatEditText.getText().toString(),
+                               AEatEditText.getText().toString(),
+                               BP_SystolEditText.getText().toString(),
+                               BP_DyastolEditText.getText().toString());
+                   }
+               });
+               return rootView1;
+           }
+          /* else {
 
                View rootView1 = inflater.inflate(R.layout.fragment_graph, container, false);
                GraphView graph = (GraphView) rootView1.findViewById(R.id.graph);
@@ -358,7 +390,7 @@ public class MainActivity extends AppCompatActivity {
                graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
 
                return rootView1;
-            }
+            }*/
         }
     }
 
@@ -367,6 +399,31 @@ public class MainActivity extends AppCompatActivity {
             String date = "10";
           //  xVals.add(date + "");
         }
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_camera) {
+            // Handle the camera action
+        } else if (id == R.id.nav_gallery) {
+
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -388,7 +445,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 4;
+            return 3;
         }
 
         @Override
@@ -400,8 +457,6 @@ public class MainActivity extends AppCompatActivity {
                     return "History";
                 case 2:
                     return "Reports";
-                case 3:
-                    return "New";
             }
             return null;
         }
