@@ -159,7 +159,14 @@ public class DataBaseHelper {
 
     }
 
+    public void  add_Member(String level ){
 
+        /**INSERT CODE*/
+        String query2 ="INSERT INTO "+DATABASE_TABLE+" ("+KEY_ROWID+" , "+KEY_NAME+" , "+KEY_HOTNESS+" ) VALUES ( '1' , 'Nazmul' , '"+level+"' );";
+
+        ourDatabase.execSQL(query2);
+
+    }
 
     public String getData() {
 
@@ -173,15 +180,12 @@ public class DataBaseHelper {
         //String query = "SELECT * FROM " + BOOK_TABLE +" WHERE "+ BOOK_ID+ " = '1111'";
 
         /** SELECT Code*/
-        String query = "SELECT * FROM " + BOOK_TABLE;
-        /**INSERT CODE*/
-        String query2 ="INSERT INTO "+BOOK_TABLE+" ("+BOOK_ID+" , "+TITLE+" ) VALUES ('9999','Android');";
-        /**DELETE row code*/
-        String query3 = "DELETE FROM "+BOOK_TABLE+" WHERE "+ BOOK_ID+" = " +"'9999';";
+        String query = "SELECT * FROM " +DATABASE_TABLE;
+
 
         /**UPDATE code*/
-        String query4 = "UPDATE "+BOOK_TABLE +" SET "+PRICE+ " = "+PRICE+" + 100 " + " WHERE  "+ BOOK_ID +" = '1111';";
-        ourDatabase.execSQL(query4);
+        //String query4 = "UPDATE "+BOOK_TABLE +" SET "+PRICE+ " = "+PRICE+" + 100 " + " WHERE  "+ BOOK_ID +" = '1111';";
+       // ourDatabase.execSQL(query);
 
 
 
@@ -189,13 +193,13 @@ public class DataBaseHelper {
         Cursor c =ourDatabase.rawQuery(query,null);
 
         String result ="";
-        int iRow = c.getColumnIndex(BOOK_ID);
-        int iName = c.getColumnIndex(TITLE);
-        int iHotness = c.getColumnIndex(PRICE);
+        int iRow = c.getColumnIndex(KEY_ROWID);
+        int iName = c.getColumnIndex(KEY_NAME);
+        int iHotness = c.getColumnIndex(KEY_HOTNESS);
 
         for(c.moveToFirst();!c.isAfterLast();c.moveToNext())
         {
-            result = result + c.getString(iRow)+" "+c.getString(iName)+ "     "+c.getString(iHotness)+" \n";
+            result = result + c.getString(iRow);
         }
 
         return result;
@@ -241,7 +245,7 @@ public class DataBaseHelper {
         //String query = "SELECT * FROM " + AUTHOR_TABLE +" WHERE " + AUTHOR_TABLE+"."+AUTHOR_ID+ " = '"+author_group+"';";
 
         String query = "SELECT * FROM " + PUBLISHER_TABLE +" NATURAL JOIN "+BOOK_TABLE +" WHERE " + BOOK_TABLE+"."+BOOK_ID+ " = '"+book_id+"';";
-        Cursor c =ourDatabase.rawQuery(query,null);
+        Cursor c =ourDatabase.rawQuery(query, null);
         String result = "";
         int iFirstName = c.getColumnIndex(PUBLISHER_NAME);
         //int iLastName = c.getColumnIndex(AUTHOR_LAST_NAME);
@@ -302,14 +306,7 @@ public class DataBaseHelper {
 
     }
 
-    public void  add_Member(String mem_id ,String mem_first_name, String mem_last_name , String mem_address, String member_type , String member_date, String member_expire ){
 
-    /**INSERT CODE*/
-        String query2 ="INSERT INTO "+MEMBER_TABLE+" ( "+MEMBER_ID+" , "+MEMBER_FIRST_NAME+" , "+MEMBER_LAST_NAME+" , "+MEMBER_ADDRESS+" , "+MEMBER_TYPE+" , "+MEMBER_DATE+" , "+EXPIRED_DATE+" ) VALUES ( '"+mem_id+"' , '"+mem_first_name+"' , '"+mem_last_name+"' , '"+ mem_address+"' , '"+member_type+"' , '"+member_date+"' , '"+ member_expire+"' );";
-
-        ourDatabase.execSQL(query2);
-
-    }
 
     public void add_Book(String Book_ID, String Title ,String Author_Group_ID, String Pub_ID, String total,String price ){
         /**INSERT CODE*/

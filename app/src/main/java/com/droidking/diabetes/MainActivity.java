@@ -31,6 +31,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.droidking.diabetes.Excel.Team;
@@ -122,17 +123,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 DataBaseHelper info = new DataBaseHelper(MainActivity.this);
                 try {
                     info.open();
+                    info.add_Member("1");
+                    info.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                //   String data = info.getData();
-                info.close();
+
 
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
                 //showAddDialog();
-ls
+
 
             }
         });
@@ -336,6 +338,18 @@ ls
                chart.animateY(1000, Easing.EasingOption.EaseOutCubic);
 
                legend.setEnabled(false);
+
+               DataBaseHelper info = new DataBaseHelper(getContext());
+               try {
+                   info.open();
+               } catch (SQLException e) {
+                   e.printStackTrace();
+               }
+               String value =  info.getData();
+               info.close();
+               TextView tv = (TextView) rootView2.findViewById(R.id.item_history_reading);
+               tv.setText(value);
+
                return rootView2;
 
            }
