@@ -1,5 +1,6 @@
 package com.droidking.diabetes;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -25,11 +26,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.droidking.diabetes.Excel.Team;
+import com.droidking.diabetes.Excel.TeamsAdapter;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -46,6 +51,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import okhttp3.MediaType;
@@ -75,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static EditText AEatEditText;
     private static EditText BP_SystolEditText;
     private static EditText BP_DyastolEditText;
+
+    private Dialog addDialog;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -110,8 +118,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                DataBaseHelper info = new DataBaseHelper(MainActivity.this);
+                try {
+                    info.open();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                //   String data = info.getData();
+                info.close();
+
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
+                //showAddDialog();
+ls
+
             }
         });
 
@@ -124,6 +146,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
 
+
+    }
+
+    public void showAddDialog() {
+        addDialog = new Dialog(MainActivity.this, R.style.AppTheme);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(addDialog.getWindow().getAttributes());
+        addDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        addDialog.setContentView(R.layout.dialog_add);
+        addDialog.getWindow().setAttributes(lp);
+        addDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        addDialog.getWindow().setDimAmount(0.5f);
+        addDialog.show();
 
     }
 
@@ -415,9 +452,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.about) {
+            Intent i = new Intent(MainActivity.this,About.class);
+            startActivity(i);
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.licence) {
 
         }
 

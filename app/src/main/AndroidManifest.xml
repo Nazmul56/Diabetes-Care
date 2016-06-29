@@ -32,7 +32,7 @@
                 android:value="com.droidking.diabetes.MainActivity" />
         </activity>
         <activity
-            android:name=".about"
+            android:name=".About"
             android:label="@string/title_activity_about"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
