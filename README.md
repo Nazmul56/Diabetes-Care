@@ -4,7 +4,7 @@
 #Screenshot
 
 ## Screenshots
-<img src="https://github.com/Nazmul56/Diabetes-Care/blob/personalUse/screenshot/page1.png?raw=true" width="888">
+<img src="https://github.com/Nazmul56/Diabetes-Care/blob/personalUse/screenshot/page1.png?raw=true" width="222">
 
 
 ## License
